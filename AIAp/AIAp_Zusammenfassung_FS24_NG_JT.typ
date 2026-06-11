@@ -496,7 +496,7 @@ $(fxcolor("grün", (3 dot 3)) dot fxcolor("orange", 32) + fxcolor("rot", 1)) dot
 fxcolor("gelb", 64) = underline(18'496)$
 
 _Output shape:_ Note the `padding='same'` hyper-parameter. This adds rows and columns of 0s to
-the input, evenly to the left/right or up/down when `'same'` so that the output feature map
+the input, evenly to the left/right or up/down when #highlight[`'same'`] so that the output feature map
 will have the _same_ dimensions as the input tensor.\
 *Calculation:*
 The input size is _increased by 1_ at the left and at the right:
@@ -567,7 +567,9 @@ In the dropout layer, a random subset of the current neurons is dropped.
 The data is often better interpretable _with_ dropout layers in between because it _reduces
 noise_ and allows rapid testing of different "versions" of a model where some neurons are
 missing. This forces the network to break up situations where neurons have adapted to mistakes
-from previous layers and thus makes the model _more robust_ and _increases its generalization_.
+from previous layers and thus makes the model _more robust_ and _increases its generalization_.\
+#hinweis[Standard Dropout is mostly effective for *Dense layers*. In convolutional *feature maps*, adjacent pixels are highly correlated (similar), rendering standard dropout ineffective. Instead, use `SpatialDropout2D` to drop entire feature maps (channels) to regularize CNNs.]
+
 
 
 = Autoencoder
