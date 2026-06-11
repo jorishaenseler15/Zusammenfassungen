@@ -66,15 +66,13 @@ _weights.pkl_ #hinweis[(potentially huge file with the parameters. Sometimes cal
 Enhances _security_, protects private/internal data.
 Depending on use-case: _Lower costs_, develop a _domain-expert model_ on your own data.
 You can do this by _fine-tuning_ a pre-trained model #hinweis[(expensive training, new data
-requires new fine-tuning)] or with _RAG_.
+  requires new fine-tuning)] or with _RAG_.
 
 == Multimodal AI
 _Modality:_ The way something is expressed or perceived #hinweis[(human senses, images, videos, sound)].
 _Multimodal:_ involving several ways of operating or dealing with something.
 A multimodal AI integrates different modes of data. Internally, different modes are mapped onto
 similar representations #hinweis[(image, text, voice representing a tree)].
-
-#pagebreak()
 
 = Technology Ethics
 *Problems of AI:*
@@ -204,8 +202,8 @@ Image classification is one of the main tasks of _supervised learning_, where tr
 consisting of an image with a label of its content is used for training.
 The trained model can then predict the most likely label when given an image.
 It requires 4 things: _Data_, a _loss function_ #hinweis[(typically a probabilistic loss like
-`SparseCategoricalCrossentropy`)], a _model_ and an _optimizer_ #hinweis[(`Adam`, an improved
-version of Stochastic Gradient Descent)]
+  `SparseCategoricalCrossentropy`)], a _model_ and an _optimizer_ #hinweis[(`Adam`, an improved
+  version of Stochastic Gradient Descent)]
 
 == Example Architecture
 - _Input:_ The pixel values of a 2D image are "flattened" into a column vector
@@ -326,7 +324,7 @@ Together, these information form an image.
   Multiple kernels are trained to extract different features.
   Multi-channel inputs need at least as many kernels as channels.
 - _The output:_ This function returns a _feature map_. This is a "map" #hinweis[(like a gray
-  scale image)] that shows the locations where a feature is present. One convolution produces
+    scale image)] that shows the locations where a feature is present. One convolution produces
   one feature map. Even if the input and the filter have multiple channels, the output of the
   convolution has one channel.
 
@@ -359,19 +357,17 @@ Field-of-view increases #hinweis[(pooled matrix contains information from a wide
 ```py
 model = Sequential([
   layers.Rescaling(1./255, input_shape=(img_height, img_width, 3)),  # Normalize pixel values
-  layers.Conv2D(16, 3, padding='same', activation='relu'),  # 16 neurons, 3x3 kernel, ReLU
+  layers.Conv2D(16, 3, padding='same', activation='relu'),  # 16 filters, 3x3 kernel, ReLU
   layers.MaxPooling2D(),  # Max pooling layer to reduce spatial dimensions
-  layers.Conv2D(32, 3, padding='same', activation='relu'),  # 32 neurons, 3x3 kernel, ReLU
+  layers.Conv2D(32, 3, padding='same', activation='relu'),  # 32 filters, 3x3 kernel, ReLU
   layers.MaxPooling2D(),  # Max pooling layer to reduce spatial dimensions
-  layers.Conv2D(64, 3, padding='same', activation='relu'),  # 64 neurons, 3x3 kernel, ReLU
+  layers.Conv2D(64, 3, padding='same', activation='relu'),  # 64 filters, 3x3 kernel, ReLU
   layers.MaxPooling2D(),  # Max pooling layer to reduce spatial dimensions
   layers.Flatten(),  # Flatten the tensor to a 1D vector
   layers.Dense(128, activation='relu'),  # Fully connected layer with 128 neurons, ReLU activation
   layers.Dense(num_classes)  # Output layer with units equal to the number of classes
 ])
 ```
-
-#pagebreak()
 
 == Calculation Example
 #image("img/aiap_4.png", width: 80%)
@@ -436,6 +432,32 @@ Bias is $1$. $=> 158 + hyph.minus 14 + 653 + 1 = underline(798)$
 
 
 === Calculation of trainable parameters (degrees of freedom)
+==== General Formulas
+===== 1. Dense (Fully Connected) Layer
+- *Formula:* $("input_dim" dot "output_dim") + "output_dim"$
+- *Weights:* Every input neuron connects to every output neuron.
+- *Bias:* One parameter for every output neuron (if `use_bias=True`).
+- *Multiple Layers (with Hidden Layers):* \
+  The output dimension of the previous layer becomes the input dimension of the next layer.
+  _Example:_ Input size of $fxcolor("grün", 784)$, hidden layer `Dense` with $fxcolor("orange", 128)$ units, and output layer `Dense` with $fxcolor("rot", 10)$ units: \
+  - *Hidden Layer:* $(fxcolor("grün", 784) dot fxcolor("orange", 128)) + fxcolor("orange", 128) = 100'480$ parameters
+  - *Output Layer:* $(fxcolor("orange", 128) dot fxcolor("rot", 10)) + fxcolor("rot", 10) = 1'290$ parameters
+  - *Total parameters:* $100'480 + 1'290 = underline(101'770)$
+
+===== 2. Conv2D Layer
+- *Formula:* $(("kernel_w" dot "kernel_h" dot "input_channels") + 1) dot "filters"$
+- *Weights:* The kernel dimensions multiplied by the depth of the input.
+- *Bias:* The $+ 1$ represents one bias per filter (if `use_bias=True`(default behaviour in Keras)).
+- *Exam Tip:* `MaxPooling2D` and `Flatten` layers always have *0 trainable parameters*!
+- *Output Shape & Padding:* \
+  - `padding="valid"` #hinweis[(Default / No padding)]: Input size shrinks.
+    $ "output_size" = floor(("input_size" - "kernel_size") / "stride") + 1 $
+    #hinweis[Edge case: If stride doesn't fit perfectly, boundary pixels at the edge are ignored.]
+  - `padding="same"` #hinweis[(Zero padding)]: Input size is preserved (if stride = 1).
+    $ "output_size" = ceil("input_size" / "stride") $
+    #hinweis[Edge case: If stride > 1, the output is downscaled. Symmetrical zero-padding is added automatically.]
+
+
 ```py
 model = models.Sequential()
 model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
@@ -515,8 +537,6 @@ _using Dropout_ in the fully-connected layers was _very effective_. Even though 
 _computationally expensive_, it was made feasible due to the utilization of GPUs during training.
 
 #image("img/aiap_11.png")
-
-#pagebreak()
 
 == Softmax Function
 Softmax _turns logits_ (numeric output of the last layer) _into probabilities_ by normalizing
@@ -644,8 +664,6 @@ class Denoise(Model):
 autoencoder = Denoise()
 ```
 */
-
-#pagebreak()
 
 = Representations
 == Expression Trees
@@ -875,7 +893,9 @@ Discounting is only applied on _future rewards_. In each state, the agent receiv
 reward $r$. When in state $S_t$, a reward 3 steps into the future is discounted by the power of 2:
 $y^2R_(t+3)$. But when actually moving there, the agent receives $r_(t+3)$, not $y^2R_(t+3)$.
 
-#pagebreak()
+- *Small $gamma$ (close to 0):* The agent is extremely short-sighted (myopic) and only prioritizes immediate rewards, ignoring future consequences.
+- *Large $gamma$ (close to 1):* The agent is far-sighted (farsighted) and willing to accept zero immediate rewards to prioritize long-term payoffs (like in chess).
+
 
 *Exercise*\
 While in state `S0`, evaluate the discounted reward of the two paths
@@ -1080,15 +1100,32 @@ a Deep Neural Network.\
 _Input:_ the state $s$ #hinweis[(e.g. RGB image, state of a chess board)],
 _Output:_ one neuron per action $a$. The neurons activity is $approx Q(s,a)$.
 
+== Value-Based vs. Policy-Based RL
+#grid(
+  columns: (1fr, 1fr),
+  gutter: 1.5em,
+  [
+    === Value-Based RL (Indirect)
+    - *Concept:* Instead of direct policy optimization, the agent estimates the Q-values $Q(s,a)$ as accurately as possible.
+    - *Policy:* Implicits from the Q-values by choosing the greedy action: $pi(s) = arg max_a Q(s,a)$ (e.g. via $epsilon$-greedy).
+    - *Algorithms:* Q-Learning, SARSA, DQN.
+  ],
+  [
+    === Policy-Based RL (Direct)
+    - *Concept:* Directly models the policy as a neural network mapping states directly to action probabilities.
+    - *Policy Gradient:* Networks are optimized using the return $G$ of full trajectories; successful actions are reinforced (higher probability), unsuccessful ones suppressed.
+    - *Algorithms:* REINFORCE (Policy Gradient), PPO.
+  ],
+)
+
 == Deep Q-Network (DQN)
 *Replay buffer:*
 The transitions that an agent performs during an episode are stored in the replay buffer as a _experience_.
 Randomly pick a few experiences, do a forward- and backward-pass to _train_ the
 network on this _batch_ of samples.\
 *Target Network:*
-This is a network that is updated _more slowly_ compared to the Q-Network, which is used to
-define the optimal policy based on the value estimation. The target network is _not_ updated
-every iteration but once in a while to _stabilize_ the learning process.\
+A second identical network updated _more slowly_ to *stabilize training*.\
+#hinweis[Prevents *chasing a moving target*: updating the same network used to predict and calculate targets ($r + gamma max_a Q(s', a)$) shifts the training target at each step, causing divergence. The Target Network is frozen to calculate stable targets, and weights are only copied from the active Q-network every $N$ steps (e.g. 10'000).]
 *Epsilon-greedy Policy:*
 Given $Q$-values, which actions should be taken? Epsilon-greedy is simple to implement and
 often works well enough for a DQN.
@@ -1110,12 +1147,12 @@ Is a _subset_ of sequential data where the x-axis is time
 Sequential Data is everywhere. It is a tremendous source of information.
 It is also a _indispensable tool in science_ and there are a lot of _business opportunities_
 and _applications_ #hinweis[(Predictive maintenance, portfolio management, sales, politics,
-weather prediction, forecasting traffic, text generation, anomaly detection, ...)]. \
+  weather prediction, forecasting traffic, text generation, anomaly detection, ...)]. \
 *Model-based Prediction:*
 Based on physics and historical data, _mathematical models_ are developed.
 The sequential data provide the initial conditions. Then the models are used to calculate the
 evolution. The _quality_ depends on many factors #hinweis[(quality of measurements, quality of
-the model, nature of the dynamic system)]. For most time-series, we _do not have a causal
+  the model, nature of the dynamic system)]. For most time-series, we _do not have a causal
 model_. Therefore, predictions need to be made _based on historical data_.
 This is done by looking for _structure/patterns_ #hinweis[(Seasonality, Trends)].\
 *Feature Engineering:*
@@ -1130,7 +1167,7 @@ in the weather forecast.
 #v(-0.5em)
 == Models
 _One-to-one_ #hinweis[(Sequence has only one time step (static).
-One input is fed and one output is generated. This is the case in traditional ANNs.)],\
+  One input is fed and one output is generated. This is the case in traditional ANNs.)],\
 _Many-to-one_ #hinweis[(sentiment classification - positive/negative sentence)],
 _One-to-Many_ #hinweis[(Image Captioning)],
 _Many-to-many_ #hinweis[(Machine Translation)]\
@@ -1183,7 +1220,22 @@ The error is propagated backward through time until the initial timestep.\
 _Binary cross entropy_ for binary classification, _categorical cross entropy_ for
 multi-class classification.\ For regression, use _RMSE_.\
 *Keras:* ```py model = Sequential() # 3 timesteps, 1 feature, 32 neurons```\
-```py model.add(SimpleRNN(units=32, input_shape=(3,1), activation = "tanh"))```
+```py model.add(SimpleRNN(units=32, input_shape=(3,1), activation = "tanh"))```\
+- *SimpleRNN Parameter Calculation:* \
+  A SimpleRNN has weights for input, hidden state, and bias:
+  $ "units" dot ("features" + "units" + 1) $
+  - $W_(h x): "features" times "units"$ #hinweis[(input weights)]
+  - $W_(h h): "units" times "units"$ #hinweis[(hidden weights)]
+  - $b_h: "units"$ #hinweis[(bias vector)]
+  #hinweis[Note: the sequence length (timesteps) does not affect parameter count.]
+  _Example:_ `SimpleRNN(units=32, input_shape=(3, 1))` where features dimension is 1: \
+  $ 32 dot (1 + 32 + 1) = 32 dot 34 = underline(1'088) "parameters" $\
+- *`return_sequences` parameter:*
+  - `return_sequences=False` #hinweis[(Many-to-One)]: Returns only the final hidden state $h_T$ at the end of the sequence (e.g., for sequence classification).
+  - `return_sequences=True` #hinweis[(Many-to-Many)]: Returns the hidden state $h_t$ for every single time step. Required when:
+    1. Stacking recurrent layers (so the next recurrent layer receives a 3D sequence input).
+    2. The output target is a sequence (e.g., sequence-to-sequence prediction/tagging).
+
 
 == Limitations
 *Exploding Gradient:*
@@ -1208,9 +1260,20 @@ $h$ is a _bottleneck_.\
 _Long Short-Term Memory (LSTM)_ has an additional "conveyor belt" signal $c$.
 During training, the LSTM learns when to keep / use / modify this signal.
 This makes an LSTM a _trainable memory unit_. LSTM still fail to learn from very long sequences.\
+- *LSTM Parameter Calculation:* \
+  An LSTM contains 4 gates, each having weights for input, hidden state, and bias:
+  $ 4 dot "units" dot ("input_dim" + "units" + 1) $
+  - $W_(h x): "input_dim" times "units"$ #hinweis[(input weights for each of the 4 gates)]
+  - $W_(h h): "units" times "units"$ #hinweis[(hidden weights for each of the 4 gates)]
+  - $b_h: "units"$ #hinweis[(bias vector for each of the 4 gates)]
+  #hinweis[Note: the sequence length (timesteps) does not affect parameter count.]
+
+  _Example:_ `LSTM(units=64, input_shape=(50, 32))` where input dimension is 32: \
+  $ 4 dot 64 dot (32 + 64 + 1) = 256 dot 97 = underline(24'832) "parameters" $
 We can't feed an _entire sequence_ into a fully connected network:
 Variable length, input is treated _independently_, _exploding_ no. of parameters.
 We need to give this "clueless" network a clue: _Inductive Bias_ aka _attention_.
+#align(center, image("img/aiap_20.png", width: 65%))
 
 == Attention
 Attention assigns varying _levels of importance_ to different words in a sentence,
@@ -1247,6 +1310,33 @@ The Output generation is (usually)\ word-by-word. Each decoder consists of a _se
 layer_, an _encoder-decoder attention layer_ which combines the vectors from the decoder below,
 with the embeddings from the encoder, and a _feed forward network_.
 
+== Transformer Flavors (One architecture, three flavors)
+#grid(
+  columns: (1fr, 1fr, 1fr),
+  gutter: 1.5em,
+  [
+    === Encoder-only
+    Reads the whole sequence and produces embeddings.\
+    - *Bidirectional attention:* sees both left and right context.
+    - _Usage:_ classification, NER, similarity, search.
+    - _Examples:_ BERT, RoBERTa (2018-), DistilBERT, Sentence-BERT.
+  ],
+  [
+    === Decoder-only
+    Generates output one token at a time.\
+    - *Causal attention:* only sees past tokens.
+    - _Usage:_ chat, code, next-token prediction.
+    - _Examples:_ GPT-1/2/3/4/5, Llama, Mistral, Qwen, Claude, Gemini.
+  ],
+  [
+    === Encoder-decoder
+    The original "Attention is all you need" design.\
+    - Encoder reads input, decoder generates output.
+    - _Usage:_ translation, summarization.
+    - _Examples:_ T5, BART (2019-), FLAN-T5, Marian (translation).
+  ],
+)
+
 == Calculation of Attention
 The _attention head_ consists of the matrices _query $Q$_, _key $K$_ and _value $V$_.
 The goal of _attention_ is to look-up the _value $V$_ of those "neighbors" which are strongly
@@ -1263,6 +1353,12 @@ _The result of this softmax-lookup is the sum of all values, weighted according 
 
 More compact representation: $"Attention"(Q,K,V) = "softmax"((Q K^T) / sqrt(d_k)) V$
 #hinweis[(The $sqrt(d_k)$ stabilizes the calculation)]
+
+*Transformer Attention Block ($W_q, W_k, W_v$):* \
+- *Formula (No Bias):* $d dot (d_q + d_k + d_v)$
+- *Formula (With Bias):* $(d + 1) dot (d_q + d_k + d_v)$
+- *Where:* $d$ is the initial embedding size, and $d_q, d_k, d_v$ are the dimensions of the projected matrices.
+- *Multi-Head Attention:* Multiply the formula by $h$ (number of heads), i.e., $dot h$.
 
 
 = Transfer learning, foundation models
@@ -1292,6 +1388,12 @@ Continuous integration, Continuous delivery, Continuous Deployment.\
 + _Model Deployment_ #hinweis[(manage rollout of different networks, track and document)]
 + _Model Monitoring_ #hinweis[(monitor performance, identify problematic cases, collect feedback and re-train)]
 
+- *Feature Store:* Zentrale DB für Features (Offline für Training, Online für Low-Latency).
+- *Model Registry:* Zentrale Ablage für trainierte Modelle (Versionen & Metadaten).
+- *Metadata Store:* Speichert Parameter, Metriken und Herkunft (Lineage) von Runs.
+- *Model Serving:* Stellt Modell via API oder Container bereit.
+- *Monitoring:* Überwacht Live-Performance, warnt bei *Concept Drift*.
+
 *Data Engineer:*
 Understands _general workflows_ and data flows with all specific requirements.\
 *DevOps:*
@@ -1310,3 +1412,34 @@ The last step can be achieved via _self-supervised learning_ where similar/redun
 automatically categorized as less relevant. This can decrease dataset size and costs.\
 When the training data is _modified_, it should also be _versioned_ to measure performance
 across different iterations and to create _reproducible models_. Can be done via Git.
+
+= Evaluation & Metriken
+- *Confusion Matrix:* Zeilen = True, Spalten = Predicted. Diagonale = Richtig klassifiziert.
+- *Accuracy:* $ ("TP" + "TN") / "Gesamt" $ (Schlecht bei unbalancierten Daten).
+- *Precision:* Wie viele der pos. Vorhersagen sind korrekt? $ "TP" / ("TP" + "FP") $
+- *Recall:* Wie viele der echten Positiven wurden gefunden? $ "TP" / ("TP" + "FN") $
+- *F1-Score:* Harmonischer Mittelwert aus Precision & Recall.
+- *k-fold Cross-Validation:* Daten in $k$ Teile splitten. $k$-mal trainieren (jedes Teil 1x Validierung). Misst robusten Generalisierungsfehler.
+
+= Learning Curves
+- *Overfitting:* Train-Loss sinkt, Val-Loss steigt. Modell lernt auswendig.
+  - _Lösung:_ Dropout, L2-Regularisierung, mehr Daten, kleineres Modell.
+- *Underfitting:* Train- & Val-Loss bleiben beide hoch. Modell zu einfach.
+  - _Lösung:_ Größeres Modell, länger trainieren, weniger Regularisierung.
+
+= Optimierung & Gradient Descent
+- *Batch GD:* Nutzt alle Daten pro Schritt. Langsam, stabil.
+- *SGD:* Nutzt 1 Datenpunkt (oder Mini-Batch). Schneller, entkommt lokalen Minima.
+- *Update Rule:* $ w_(t+1) = w_t - alpha dot (partial L) / (partial w) $  ($alpha$ = Learning Rate).
+- *Backpropagation:* Nutzt Kettenregel & Memoization (Teilergebnisse speichern). Verhindert doppelte Berechnungen im Berechnungsbaum.
+
+= Business Model Canvas (BMC)
+1. *Value Proposition:* Nutzen der KI (z.B. Automatisierung).
+2. *Customer Segments:* Wer nutzt es?
+3. *Channels:* Wie kommt die KI zum Kunden? (API, App).
+4. *Customer Relationships:* Art der Beziehung (z.B. Self-Service).
+5. *Revenue Streams:* Wie verdienen wir Geld? (Abo, Pay-per-Prediction).
+6. *Key Resources:* Was brauchen wir? (*Daten*, GPUs, ML-Engineers).
+7. *Key Activities:* Was tun wir? (Datencleaning, Training, MLOps).
+8. *Key Partnerships:* Externe Helfer (z.B. Cloud-Provider).
+9. *Cost Structure:* Hauptkosten (Infrastruktur/Cloud, Gehälter).
