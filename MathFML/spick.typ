@@ -132,7 +132,7 @@ $f: RR^n arrow.r RR$ (Spaltenvektor der partiellen Ableitungen).
 - *Vektor-Gradienten:* \
   $nabla norm(bold(x)) = frac(bold(x)^T, norm(bold(x)))$ \
   $nabla (bold(x)^T bold(x)) = nabla norm(bold(x))^2 = 2 dot norm(bold(x)) dot frac(bold(x)^T, norm(bold(x))) = 2 bold(x)^T$ \
-  #text(size: 5.5pt, fill: rgb("#475569"))[(Hinweis: $bold(x)^T bold(x)$ ist eine reelle Zahl / Skalar)] \
+  #text(size: 5.5pt, fill: rgb("#475569"))[(Hinweis: $bold(x)^T bold(x)$ ist reell. $norm(bold(x)) = (sum_(i=1)^n x_i^2)^(1/2) = sqrt(bold(x)^T bold(x))$ und $1/norm(bold(x)) = (sum_(i=1)^n x_i^2)^(-1/2)$)] \
 
 == Jacobi-Matrix $J_f$ (Vektor $arrow.r$ Matrix)
 $bold(f): RR^n arrow.r RR^m$ (Grösse $m times n$). Zeile $i$ = Ableitungen von $f_i$ nach allen Variablen.
