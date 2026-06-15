@@ -64,7 +64,15 @@
   [
     - Kochbuch-Berechnung:
       1. Zeile $i$ im Ergebnis = Skalarprodukt aus $i$-ter Zeile von $bold(A)$ und Vektor $bold(x)$.
-      2. Formel: $y_i = sum_(j=1)^n A_(i j) x_j$
+      2. Formel: $y_i = sum_(j=1)^n A_(i j) x_j$ \
+        #block[
+          #show math.equation: it => {
+            show "k": set text(fill: rgb("#b91c1c"))
+            show "i": set text(fill: rgb("#1e40af"))
+            it
+          }
+          $v_i = sum_k M_(i k) x_k$
+        ]
   ],
   align(center + horizon)[
     #image("img/matmul.png", width: 100%)
@@ -77,6 +85,16 @@
   1. Matrix-Äquivalent: Einheitsmatrix $bold(I) = (delta_(i j))$
   2. Ableitung von Vektoren: $partial x_i / partial x_j = delta_(i j)$
   3. Filter-Regel: $sum_(j) delta_(i j) f(j) = f(i)$
+    #block[
+      #show math.equation: it => {
+        show "k": set text(fill: rgb("#b91c1c"))
+        show "m": set text(fill: rgb("#047857"))
+        show "i": set text(fill: rgb("#1e40af"))
+        it
+      }
+      _Bsp:_ $sum_(k=1)^n delta_(k m) U_(k i) = U_(m i)$
+    ]
+
 
 == Mitternachtsformel (a-b-c-Formel)
 Löse $a x^2 + b x + c = 0$ über:
@@ -114,6 +132,7 @@ $f: RR^n arrow.r RR$ (Spaltenvektor der partiellen Ableitungen).
 - *Vektor-Gradienten:* \
   $nabla norm(bold(x)) = frac(bold(x)^T, norm(bold(x)))$ \
   $nabla (bold(x)^T bold(x)) = nabla norm(bold(x))^2 = 2 dot norm(bold(x)) dot frac(bold(x)^T, norm(bold(x))) = 2 bold(x)^T$ \
+  #text(size: 5.5pt, fill: rgb("#475569"))[(Hinweis: $bold(x)^T bold(x)$ ist eine reelle Zahl / Skalar)] \
 
 == Jacobi-Matrix $J_f$ (Vektor $arrow.r$ Matrix)
 $bold(f): RR^n arrow.r RR^m$ (Grösse $m times n$). Zeile $i$ = Ableitungen von $f_i$ nach allen Variablen.
@@ -135,7 +154,10 @@ $bold(f): RR^n arrow.r RR^m$ (Grösse $m times n$). Zeile $i$ = Ableitungen von 
   columns: (1.5fr, 1fr),
   gutter: 4pt,
   [
-    $J_(f compose g)(x) = J_f(g(x)) dot J_g(x)$ \ (Matrizenmultiplikation)
+    $J_(f compose g)(x) = J_f(g(x)) dot J_g(x)$ \
+    Für $3+$ Funktionen: \
+    $J_(f compose g compose h)(x) = J_f(g(h(x))) dot J_g(h(x)) dot J_h(x)$ \
+    (Matrizenmultiplikation von links nach rechts)
     - _Kochbuch-Bsp (Ableitung entlang Kurve):_ \
       Gegeben $f(x,y) = x dot y$ und Kurve $bold(c)(t) = mat(t^2; 3 t)$. Gesucht $dif / (dif t) f(bold(c)(t))$:
       1. Äussere Ableitung: $J_f (x,y) = mat(y, x)$
@@ -144,7 +166,8 @@ $bold(f): RR^n arrow.r RR^m$ (Grösse $m times n$). Zeile $i$ = Ableitungen von 
       4. Multiplikation: $mat(3 t, t^2) dot mat(2 t; 3) = 3 t dot 2 t + t^2 dot 3 = 9 t^2$
   ],
   align(center + horizon)[
-    #image("img/cummutative-diagram.png", width: 100%)
+    #v(4pt)
+    #image("img/cummutative-diagram-3.png", width: 100%)
   ],
 )
 
@@ -155,12 +178,16 @@ $ bold(f)(bold(x)) approx bold(f)(bold(a)) + J_f (bold(a)) dot (bold(x) - bold(a
   1. $bold(f)(bold(a)) = mat(1^2 + 2^2; 1 dot 2) = mat(5; 2)$
   2. Jacobi: $J_f (x,y) = mat(2x, 2y; y, x) => J_f (bold(a)) = mat(2, 4; 2, 1)$
   3. Formel:
-     $ tilde(bold(f))(x,y) &= mat(5; 2) + mat(2, 4; 2, 1) mat(x - 1; y - 2) \
-                           &= mat(2x + 4y - 5; 2x + y - 2) $
+    $
+      tilde(bold(f))(x,y) & = mat(5; 2) + mat(2, 4; 2, 1) mat(x - 1; y - 2) \
+                          & = mat(2x + 4y - 5; 2x + y - 2)
+    $
   4. Approx. für $bold(x) = mat(1.01; 1.98)$ (nahe $bold(a)$):
-     $ tilde(bold(f))(1.01, 1.98) &= mat(5; 2) + mat(2, 4; 2, 1) mat(0.01; -0.02) \
-                                 &= mat(4.94; 2.00) $
-     *(Exakt: $bold(f)(1.01, 1.98) = mat(4.9405; 1.9998)$)*
+    $
+      tilde(bold(f))(1.01, 1.98) & = mat(5; 2) + mat(2, 4; 2, 1) mat(0.01; -0.02) \
+                                 & = mat(4.94; 2.00)
+    $
+    *(Exakt: $bold(f)(1.01, 1.98) = mat(4.9405; 1.9998)$)*
 
 #show math.equation: set text(size: 6.5pt)
 
@@ -261,7 +288,10 @@ _Kochbuch (4 Schritte):_
 1. *Likelihood $L(theta)$ aufstellen:* $L(theta) = product_(i=1)^n f(x_i; theta)$
 2. *Log-Likelihood $ell(theta)$ (ln anwenden):* \
   $ell(theta) = ln(L(theta)) = sum_(i=1)^n ln(f(x_i; theta))$ (Aus Produkt wird Summe) \
-  #text(size: 5.5pt, fill: rgb("#475569"))[(Kostenfunktion / Neg. Log-Likelihood: $c(theta) = -ell(theta) = -sum ln(f(x_i; theta))$)]
+  #text(
+    size: 5.5pt,
+    fill: rgb("#475569"),
+  )[(Kostenfunktion / Neg. Log-Likelihood: $c(theta) = -ell(theta) = -sum ln(f(x_i; theta))$)]
 3. *Ableiten:* $partial / (partial theta) ell(theta)$ berechnen.
 4. *Nullsetzen & Auflösen:* $partial / (partial theta) ell(theta) limits(=)^! 0 => hat(theta)_(M L E)$
 - *Bernoulli-Likelihood (k Erfolge in n Versuchen):* \
@@ -340,6 +370,17 @@ _Kochbuch (4 Schritte):_
     $
 - *Verhalten im Contour Plot:*
   Bewegung immer orthogonal (senkrecht) zu den Höhenlinien in Richtung des tiefsten Punktes. Bei zu grosser Lernrate $alpha$ kann das Minimum übersprungen werden.
+- *Fehlende globale Konvergenz (3 Szenarien):*
+  1. *Lokales statt globales Minimum:*
+     - _Häufigkeit:_ Sehr wahrscheinlich bei mehreren Minima.
+     - _Fix:_ Verschiedene Startpunkte wählen.
+  2. *Sattelpunkt / Maximum (stat. Punkt):*
+     - _Häufigkeit:_ Sehr unwahrscheinlich.
+     - _Fix:_ Anderen Startpunkt wählen.
+  3. *Overshooting / Keine Konvergenz:*
+     - _Häufigkeit:_ Wahrscheinlich bei grosser Lernrate $alpha$ (v.a. in engen Tälern).
+     - _Fix:_ Kleinere Lernrate $alpha$ wählen.
+
 
 *B. Newton-Verfahren (Newton's Method)*
 - *Variante 1: Nullstellensuche (1D)*: $f(x) = 0$
