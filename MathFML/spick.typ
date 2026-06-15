@@ -281,6 +281,10 @@ _Ziel:_ Lokale Extrema finden & klassifizieren für $f(x,y)$.
 
 *D. Statistische Unabhängigkeit*
 $X, Y$ unabhängig $<=> f_(X,Y)(x,y) = f_X (x) dot f_Y (y)$ (sonst abhängig)
+- _Bsp:_ $f_X(x) = 1/2 dot bb(1)_((0,2))(x)$ und $f_Y(y) = 1/3 dot bb(1)_((0,3))(y)$. \
+  Da $f_X (x) dot f_Y (y) = 1/6 dot bb(1)_((0,2))(x) dot bb(1)_((0,3))(y) != 1/6 dot bb(1)_((0,6))(x y) = f_(X,Y)(x,y)$, sind sie *abhängig*. \
+  (Gegenbsp: $f_X(1) dot f_Y(5) = 1/2 dot 0 = 0$, aber $f_(X,Y)(1,5) = 1/6 dot bb(1)_((0,6))(5) = 1/6 != 0$)
+
 
 *E. Maximum Likelihood Estimation (MLE)*
 Ziel: Parameter $theta$ finden, die die Wahrscheinlichkeit der Stichprobe maximieren.
