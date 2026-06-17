@@ -132,7 +132,10 @@ $f: RR^n arrow.r RR$ (Spaltenvektor der partiellen Ableitungen).
 - *Vektor-Gradienten:* \
   $nabla norm(bold(x)) = frac(bold(x)^T, norm(bold(x)))$ \
   $nabla (bold(x)^T bold(x)) = nabla norm(bold(x))^2 = 2 dot norm(bold(x)) dot frac(bold(x)^T, norm(bold(x))) = 2 bold(x)^T$ \
-  #text(size: 5.5pt, fill: rgb("#475569"))[(Hinweis: $bold(x)^T bold(x)$ ist reell. $norm(bold(x)) = (sum_(i=1)^n x_i^2)^(1/2) = sqrt(bold(x)^T bold(x))$ und $1/norm(bold(x)) = (sum_(i=1)^n x_i^2)^(-1/2)$)] \
+  #text(
+    size: 5.5pt,
+    fill: rgb("#475569"),
+  )[(Hinweis: $bold(x)^T bold(x)$ ist reell. $norm(bold(x)) = (sum_(i=1)^n x_i^2)^(1/2) = sqrt(bold(x)^T bold(x))$ und $1/norm(bold(x)) = (sum_(i=1)^n x_i^2)^(-1/2)$)] \
 
 == Jacobi-Matrix $J_f$ (Vektor $arrow.r$ Matrix)
 $bold(f): RR^n arrow.r RR^m$ (Grösse $m times n$). Zeile $i$ = Ableitungen von $f_i$ nach allen Variablen.
@@ -197,6 +200,17 @@ _Ziel:_ Lokale Extrema finden & klassifizieren für $f(x,y)$.
 - _Bsp:_ $f(x,y) = x^3 - 12 x + y^2$
 1. *Stationäre Punkte:* $nabla f(x,y) = mat(3 x^2 - 12; 2 y) limits(=)^! mat(0; 0)$
   $=> 3 x^2 - 12 = 0 => x_(1,2) = +- 2$ und $2 y = 0 => y = 0$. Kandidaten: $P_1(2, 0), P_2(-2, 0)$
+  - *LGS-Lösungsstrategien für $nabla f = bold(0)$:*
+    - *S1: Ausklammern & Nullprodukt* (Trick):
+      Nie durch Variable teilen!
+      $x y = 2x => x y - 2x = 0 => x(y-2) = 0 =>$ Fall 1: $x=0$, Fall 2: $y=2$.
+      Fälle einzeln in andere Gleichung einsetzen.
+    - *S2: Einsetzungsverfahren* (Zuverlässig):
+      Einfachste Gleichung nach einer Variable auflösen und in andere einsetzen.
+      Bsp: $2x - y = 0 => y = 2x$ in (II) einsetzen.
+    - *S3: Subtraktion* (Symmetrie-Trick):
+      Bei fast identischen Gleichungen (I) - (II) rechnen.
+      Oft entsteht $x^2 - y^2 = (x-y)(x+y) = 0 =>$ S1 anwenden.
 #grid(
   columns: (1.6fr, 1fr),
   gutter: 6pt,
@@ -376,14 +390,14 @@ _Kochbuch (4 Schritte):_
   Bewegung immer orthogonal (senkrecht) zu den Höhenlinien in Richtung des tiefsten Punktes. Bei zu grosser Lernrate $alpha$ kann das Minimum übersprungen werden.
 - *Fehlende globale Konvergenz (3 Szenarien):*
   1. *Lokales statt globales Minimum:*
-     - _Häufigkeit:_ Sehr wahrscheinlich bei mehreren Minima.
-     - _Fix:_ Verschiedene Startpunkte wählen.
+    - _Häufigkeit:_ Sehr wahrscheinlich bei mehreren Minima.
+    - _Fix:_ Verschiedene Startpunkte wählen.
   2. *Sattelpunkt / Maximum (stat. Punkt):*
-     - _Häufigkeit:_ Sehr unwahrscheinlich.
-     - _Fix:_ Anderen Startpunkt wählen.
+    - _Häufigkeit:_ Sehr unwahrscheinlich.
+    - _Fix:_ Anderen Startpunkt wählen.
   3. *Overshooting / Keine Konvergenz:*
-     - _Häufigkeit:_ Wahrscheinlich bei grosser Lernrate $alpha$ (v.a. in engen Tälern).
-     - _Fix:_ Kleinere Lernrate $alpha$ wählen.
+    - _Häufigkeit:_ Wahrscheinlich bei grosser Lernrate $alpha$ (v.a. in engen Tälern).
+    - _Fix:_ Kleinere Lernrate $alpha$ wählen.
 
 
 *B. Newton-Verfahren (Newton's Method)*
@@ -536,3 +550,32 @@ _Kochbuch (4 Schritte):_
   #v(2pt)
   #image("img/trigonometriewerte.png", width: 100%)
 ]
+
+= Wichtige Konstanten & Grenzwerte
+#table(
+  columns: (1fr, 1.2fr),
+  stroke: 0.3pt + rgb("#cbd5e1"),
+  fill: (col, row) => if row == 0 { rgb("#2a6f97") } else { none },
+  inset: 2.5pt,
+  align: (left + horizon, left + horizon),
+  table.header(text(fill: white, weight: "bold")[Ausdruck / Limes], text(fill: white, weight: "bold")[Wert]),
+  [$e^0$], [$1$],
+  [$e^1$], [$e approx 2.718$],
+  [$e^(-1) = 1/e$], [$approx 0.368$],
+  [$pi$], [$approx 3.1415$],
+  [$sqrt(2)$], [$approx 1.414$],
+  [$sqrt(3)$], [$approx 1.732$],
+  [$lim_(x -> oo) 1/x$], [$0$],
+  [$lim_(x -> 0^+) 1/x$], [$+oo$],
+  [$lim_(x -> 0^-) 1/x$], [$-oo$],
+  [$lim_(x -> oo) e^x$], [$oo$],
+  [$lim_(x -> -oo) e^x$], [$0$],
+  [$lim_(x -> oo) ln(x)$], [$oo$],
+  [$lim_(x -> 0^+) ln(x)$], [$-oo$],
+  [$lim_(x -> oo) x^n e^(-x)$], [$0$],
+  [$lim_(x -> oo) frac(ln(x), x)$], [$0$],
+  [$lim_(x -> 0^+) x ln(x)$], [$0$],
+  [$lim_(x -> oo) (1 + a/x)^x$], [$e^a$],
+  [$lim_(x -> oo) sigma(x)$], [$1$],
+  [$lim_(x -> -oo) sigma(x)$], [$0$],
+)
