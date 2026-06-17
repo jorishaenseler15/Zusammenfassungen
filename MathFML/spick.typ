@@ -199,7 +199,8 @@ $ bold(f)(bold(x)) approx bold(f)(bold(a)) + J_f (bold(a)) dot (bold(x) - bold(a
 _Ziel:_ Lokale Extrema finden & klassifizieren für $f(x,y)$.
 - _Bsp:_ $f(x,y) = x^3 - 12 x + y^2$
 1. *Stationäre Punkte:* $nabla f(x,y) = mat(3 x^2 - 12; 2 y) limits(=)^! mat(0; 0)$
-  $=> 3 x^2 - 12 = 0 => x_(1,2) = +- 2$ und $2 y = 0 => y = 0$. Kandidaten: $P_1(2, 0), P_2(-2, 0)$
+  $=> 3 x^2 - 12 = 0 => x_(1,2) = +- 2$ und $2 y = 0 => y = 0$. Kandidaten: $P_1(2, 0), P_2(-2, 0)$ \
+  #hl[(Tipp: Mit Fällen arbeiten und in die andere Gleichung einsetzen!)]
   - *LGS-Lösungsstrategien für $nabla f = bold(0)$:*
     - *S1: Ausklammern & Nullprodukt* (Trick):
       Nie durch Variable teilen!
