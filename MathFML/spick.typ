@@ -116,7 +116,7 @@ $sum lambda_i bold(v)_i = bold(0) => lambda_1 = ... = lambda_k = 0$ (nur trivial
 - Kochbuch (Vektoren als Spalten in Matrix $bold(A)$): \
   Bringe $[bold(A)|bold(0)]$ mit Gauss auf Zeilenstufenform.
   - Jede Spalte hat ein Pivot-Element $=>$ LU
-  - Spalte ohne Pivot (Nullzeile) $=>$ LA
+  - Spalte ohne Pivot (freie Variable) $=>$ LA
   _Bsp:_ $bold(v)_1 = mat(1; 0; 2), bold(v)_2 = mat(2; 1; 0), bold(v)_3 = mat(0; -1; 4) arrow.r.double [bold(A) | bold(0)] = mat(1, 2, 0, 0; 0, 1, -1, 0; 2, 0, 4, 0; augment: #3)$ \
   $arrow.r.double^"Gauss" mat(1, 2, 0, 0; 0, 1, -1, 0; 0, -4, 4, 0; augment: #3) arrow.r.double mat(1, 2, 0, 0; 0, 1, -1, 0; 0, 0, 0, 0; augment: #3) =>$ Spalte 3 ohne Pivot $=>$ LA.
 
@@ -129,13 +129,18 @@ $sum lambda_i bold(v)_i = bold(0) => lambda_1 = ... = lambda_k = 0$ (nur trivial
 $f: RR^n arrow.r RR$ (Spaltenvektor der partiellen Ableitungen).
 - _Bsp:_ $f(x,y) = x^2 y + 3 y => partial f / partial x = 2 x y, partial f / partial y = x^2+3$
   $=> nabla f(x,y) = mat(2 x y; x^2 + 3)$
-- *Vektor-Gradienten:* \
-  $nabla norm(bold(x)) = frac(bold(x)^T, norm(bold(x)))$ \
-  $nabla (bold(x)^T bold(x)) = nabla norm(bold(x))^2 = 2 dot norm(bold(x)) dot frac(bold(x)^T, norm(bold(x))) = 2 bold(x)^T$ \
+- *Vektor-Gradienten:*
+  $ |dot| : cases(
+    RR^n &arrow.r RR^+,
+    bold(x) &|-> sqrt(sum_(i=1)^n x_i^2)
+  ) $
+  $ |bold(u)| = sqrt(bold(u)^T bold(u)) = sqrt(sum_k u_k^2) \
+    nabla |bold(u)| = frac(1, |bold(u)|) bold(u)^T \
+    nabla (bold(x)^T bold(x)) = nabla |bold(x)|^2 = 2 bold(x)^T $
   #text(
     size: 5.5pt,
     fill: rgb("#475569"),
-  )[(Hinweis: $bold(x)^T bold(x)$ ist reell. $norm(bold(x)) = (sum_(i=1)^n x_i^2)^(1/2) = sqrt(bold(x)^T bold(x))$ und $1/norm(bold(x)) = (sum_(i=1)^n x_i^2)^(-1/2)$)] \
+  )[(Hinweis: $bold(x)^T bold(x)$ ist reell. $1/(|bold(x)|) = (sum_(i=1)^n x_i^2)^(-1/2)$)]
 
 == Jacobi-Matrix $J_f$ (Vektor $arrow.r$ Matrix)
 $bold(f): RR^n arrow.r RR^m$ (Grösse $m times n$). Zeile $i$ = Ableitungen von $f_i$ nach allen Variablen.
@@ -166,7 +171,7 @@ $bold(f): RR^n arrow.r RR^m$ (Grösse $m times n$). Zeile $i$ = Ableitungen von 
       1. Äussere Ableitung: $J_f (x,y) = mat(y, x)$
       2. Kurve in $J_f$ einsetzen: $J_f (bold(c)(t)) = mat(3 t, t^2)$
       3. Innere Ableitung: $J_c (t) = bold(c)'(t) = mat(2 t; 3)$
-      4. Multiplikation: $mat(3 t, t^2) dot mat(2 t; 3) = 3 t dot 2 t + t^2 dot 3 = 9 t^2$
+      4. Multiplikation: $mat(3 t, t^2) dot mat(2 t; 3) = 3 t dot 2 t + t^2 dot 3 = 6 t^2 + 3 t^2 = 9 t^2$
   ],
   align(center + horizon)[
     #v(4pt)
@@ -218,7 +223,7 @@ _Ziel:_ Lokale Extrema finden & klassifizieren für $f(x,y)$.
   [
     2. *Hesse-Matrix:* $H_f (x,y) = mat(f_(x x), f_(x y); f_(y x), f_(y y))$ \
       #v(2pt)
-      (Symmetrisch, da $f_(x y) = f_(y x)$) \
+      (In Prüfungsaufgaben meist symmetrisch, da $f_(x y) = f_(y x)$) \
       #v(2pt)
       - Bsp: $H_f (x,y) = mat(6 x, 0; 0, 2)$
   ],
@@ -249,8 +254,8 @@ _Ziel:_ Lokale Extrema finden & klassifizieren für $f(x,y)$.
   - Nur minus ($-$) $=>$ negativ definit $=>$ Maximum
   - Beides ($+$ und $-$) $=>$ indefinit $=>$ Sattelpunkt
   - _Klassifikation Bsp:_
-    - $P_1(2,0): H_f (2,0) = mat(12, 0; 0, 2) => q(u, v) = mat(u, v) mat(12, 0; 0, 2) mat(u; v) = 6 u^2 + v^2$ (nur $+$) $=>$ Minimum
-    - $P_2(-2,0): H_f (-2,0) = mat(-12, 0; 0, 2) => q(u, v) = mat(u, v) mat(-12, 0; 0, 2) mat(u; v) = -6 u^2 + v^2$ (beides) $=>$ Sattelpunkt
+    - $P_1(2,0): H_f (2,0) = mat(12, 0; 0, 2) => q(u, v) = mat(u, v) mat(12, 0; 0, 2) mat(u; v) = 12 u^2 + 2 v^2$ (nur $+$) $=>$ Minimum
+    - $P_2(-2,0): H_f (-2,0) = mat(-12, 0; 0, 2) => q(u, v) = mat(u, v) mat(-12, 0; 0, 2) mat(u; v) = -12 u^2 + 2 v^2$ (beides) $=>$ Sattelpunkt
   - *Contour Plots (Höhenlinien):*
     - Minima/Maxima: Zentren geschlossener Ringe/Ellipsen.
     - Sattelpunkte: Kreuzungen/Einschnürungen zw. Bergen & Tälern.
@@ -449,16 +454,23 @@ _Kochbuch (4 Schritte):_
     text(fill: white, weight: "bold")[Ableitung $f'(x) = dif f / dif x$],
   ),
   [$c$ (Konstante)], [$0$],
+  [$x$], [$1$],
+  [$x^2$], [$2x$],
   [$x^n$], [$n x^(n-1)$],
+  [$1/x$], [$-1/x^2$],
+  [$sqrt(x)$], [$1/(2 sqrt(x))$],
   [$e^x$], [$e^x$],
   [$e^(g(x))$], [$g'(x) e^(g(x))$ #text(size: 5.5pt, fill: rgb("#64748b"))[(Kettenregel)]],
+  [$a^x$], [$\ln(a) a^x$],
   [$ln(x)$], [$1/x$],
   [$ln(g(x))$], [$g'(x) / g(x)$ #text(size: 5.5pt, fill: rgb("#64748b"))[(Log.-Trick)]],
+  [$log_b(x)$], [$1 / (\ln(b) x)$],
   [$sin(x)$], [$cos(x)$],
   [$cos(x)$], [$-sin(x)$],
   [$tan(x)$], [$1 / cos^2(x) = 1 + tan^2(x)$],
   [$arcsin(x)$], [$1 / sqrt(1 - x^2)$],
   [$arccos(x)$], [$-1 / sqrt(1 - x^2)$],
+  [$arctan(x)$], [$1 / (1 + x^2)$],
   [Sigmoid $sigma(x)$],
   [$sigma(x) (1 - sigma(x))$ #text(size: 5.5pt, fill: rgb("#64748b"))[mit $sigma(x) = 1/(1+e^(-x))$]],
 
@@ -469,6 +481,7 @@ _Kochbuch (4 Schritte):_
 )
 
 = Integrationsregeln
+#text(size: 5.5pt, fill: rgb("#b91c1c"))[*Nach dem Integrieren + C nicht vergessen!*]
 
 #table(
   columns: (1fr, 1.2fr),
@@ -481,13 +494,20 @@ _Kochbuch (4 Schritte):_
     text(fill: white, weight: "bold")[Integral $integral f(x) dif x$],
   ),
   [$0$], [$C$ #text(size: 5.5pt, fill: rgb("#64748b"))[(Integrationskonstante)]],
+  [$K$ (Konstante)], [$K x + C$],
   [$x^n$ #text(size: 5.5pt, fill: rgb("#64748b"))[($n != -1$)]], [$x^(n+1) / (n+1) + C$],
+  [$sqrt(x)$], [$2/3 x^(3/2) + C$],
+  [$1/sqrt(x)$], [$2 sqrt(x) + C$],
   [$1/x$], [$ln |x| + C$],
   [$e^x$], [$e^x + C$],
   [$e^(a x)$], [$1/a e^(a x) + C$],
+  [$a^x$], [$1/ln(a) a^x + C$],
   [$sin(x)$], [$-cos(x) + C$],
   [$cos(x)$], [$sin(x) + C$],
   [$1 / cos^2(x)$], [$tan(x) + C$],
+  [$1 / sqrt(1-x^2)$], [$arcsin(x) + C$],
+  [$1 / (1+x^2)$], [$arctan(x) + C$],
+  [$ln(x)$], [$x ln(x) - x + C$],
   [$arcsin(x)$], [$x arcsin(x) + sqrt(1 - x^2) + C$],
   [$arccos(x)$], [$x arccos(x) - sqrt(1 - x^2) + C$],
   [$a / x^(a+1)$], [$-x^(-a) + C$ #text(size: 5.5pt, fill: rgb("#64748b"))[(FS25)]],
