@@ -303,9 +303,10 @@ _Ziel:_ Lokale Extrema finden & klassifizieren für $f(x,y)$.
 
 *D. Statistische Unabhängigkeit*
 $X, Y$ unabhängig $<=> f_(X,Y)(x,y) = f_X (x) dot f_Y (y)$ (sonst abhängig)
-- _Bsp:_ $f_X(x) = 1/2 dot bb(1)_((0,2))(x)$ und $f_Y(y) = 1/3 dot bb(1)_((0,3))(y)$. \
-  Da $f_X (x) dot f_Y (y) = 1/6 dot bb(1)_((0,2))(x) dot bb(1)_((0,3))(y) != 1/6 dot bb(1)_((0,6))(x y) = f_(X,Y)(x,y)$, sind sie *abhängig*. \
-  (Gegenbsp: $f_X(1) dot f_Y(5) = 1/2 dot 0 = 0$, aber $f_(X,Y)(1,5) = 1/6 dot bb(1)_((0,6))(5) = 1/6 != 0$)
+- _Bsp (unabhängig):_ $f(x,y) = 4 x y$ für $0 <= x, y <= 1$, sonst $0$. #v(3pt)
+  - $f_X (x) = integral_0^1 4 x y dif y = [2 x y^2]_(y=0)^1 = 2 x$ für $0 <= x <= 1$ #v(3pt)
+  - $f_Y (y) = integral_0^1 4 x y dif x = [2 x^2 y]_(x=0)^1 = 2 y$ für $0 <= y <= 1$ #v(3pt)
+  - Check: $f_X (x) dot f_Y (y) = 2 x dot 2 y = 4 x y = f(x,y) =>$ unabhängig.
 
 
 *E. Maximum Likelihood Estimation (MLE)*
