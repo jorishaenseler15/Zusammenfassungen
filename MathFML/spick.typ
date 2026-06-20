@@ -126,7 +126,8 @@ $sum lambda_i bold(v)_i = bold(0) => lambda_1 = ... = lambda_k = 0$ (nur trivial
 #show math.equation: set text(size: 7.5pt)
 
 == Gradient $nabla f$ (Skalar $arrow.r$ Vektor)
-$f: RR^n arrow.r RR$ (Spaltenvektor der partiellen Ableitungen).
+$f: RR^n arrow.r RR$ (Spaltenvektor der partiellen Ableitungen). \
+#text(size: 5.5pt, fill: rgb("#475569"))[(Regel: Man leitet nur nach der gesuchten Variable ab. Alle anderen Variablen werden wie Konstanten / Zahlen behandelt.)]
 - _Bsp:_ $f(x,y) = x^2 y + 3 y => partial f / partial x = 2 x y, partial f / partial y = x^2+3$
   $=> nabla f(x,y) = mat(2 x y; x^2 + 3)$
 - *Vektor-Gradienten:*
