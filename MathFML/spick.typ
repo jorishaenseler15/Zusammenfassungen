@@ -230,9 +230,11 @@ _Ziel:_ Lokale Extrema finden & klassifizieren für $f(x,y)$.
   align(center + horizon)[
     #image("img/hessematrix.png", width: 90%)
   ],
-)
-3. *Definitheit (über quadratische Form):*
+)3. *Punkte einsetzen:* Falls Variablen in $H_f(x,y)$ existieren (z.B. $x$ im Bsp.), jeden stationären Punkt $P_i$ einzeln in $H_f$ einsetzen, um für jeden Punkt eine konstante Matrix zu erhalten. \
+\
+4. *Definitheit (über quadratische Form):*
   #block[
+
     #show math.equation: it => {
       show "a": set text(fill: rgb("#1e40af"))
       show "b": set text(fill: rgb("#047857"))
