@@ -570,6 +570,18 @@ missing. This forces the network to break up situations where neurons have adapt
 from previous layers and thus makes the model _more robust_ and _increases its generalization_.\
 #hinweis[Standard Dropout is mostly effective for *Dense layers*. In convolutional *feature maps*, adjacent pixels are highly correlated (similar), rendering standard dropout ineffective. Instead, use `SpatialDropout2D` to drop entire feature maps (channels) to regularize CNNs.]
 
+== L1 & L2 Regularization (Weight Decay)
+Regularization techniques are used to _prevent overfitting_ by penalizing large weights in the model, forcing it to learn simpler and more generalized patterns. They add a penalty term to the loss function.
+
+- *L1 Regularization (Lasso)*: Adds the _absolute_ value of the weights as a penalty. It encourages sparsity, meaning it drives less important weights exactly to zero. This acts as a built-in feature selection.
+- *L2 Regularization (Ridge)*: Adds the _squared_ value of the weights as a penalty. It heavily penalizes very large weights but rarely drives them exactly to zero. It spreads the weight values more evenly, preventing the network from relying too heavily on any single feature.
+
+```py
+# Can be applied to Dense or Conv layers via kernel_regularizer
+tf.keras.layers.Dense(64, kernel_regularizer=tf.keras.regularizers.L2(0.01))
+```
+
+
 
 
 = Autoencoder
@@ -1221,8 +1233,9 @@ The error is propagated backward through time until the initial timestep.\
 *Loss Function:*
 _Binary cross entropy_ for binary classification, _categorical cross entropy_ for
 multi-class classification.\ For regression, use _RMSE_.\
-*Keras:* ```py model = Sequential() # 3 timesteps, 1 feature, 32 neurons```\
+*Keras:* ```py model = Sequential() # 3 timesteps, 1 feature, 32 units (neurons of hidden state)```\
 ```py model.add(SimpleRNN(units=32, input_shape=(3,1), activation = "tanh"))```\
+$ "Data Shape" = ("Batch Size", bold("Timesteps"), bold("Features")) $
 - *SimpleRNN Parameter Calculation:* \
   A SimpleRNN has weights for input, hidden state, and bias:
   $ "units" dot ("features" + "units" + 1) $
@@ -1258,6 +1271,10 @@ They make use of a powerful building block: _the attention mechanism_.\
 All information about past patterns in the sequence must be conveyed through the hidden signal
 $h$ #hinweis[(context vector)]. The longer the sequence, the more information is "faded out".
 $h$ is a _bottleneck_.\
+*Activation Function (tanh):* \
+$ tanh(x) = (e^x - e^(-x)) / (e^x + e^(-x)) $
+Maps values to the range $[-1, 1]$. Centers data around 0, often leading to faster convergence than Sigmoid.
+
 *Techniques to overcome these limitations:*
 _Long Short-Term Memory (LSTM)_ has an additional "conveyor belt" signal $c$.
 During training, the LSTM learns when to keep / use / modify this signal.
@@ -1297,6 +1314,11 @@ For text processing, the _relative position_ of each word _within the sequence i
 #hinweis[(sentence structure)]. For each word, a _"location vector"_ is calculated and added
 (or concatenated) to its embedding vector before it is fed into the encoder.
 A common technique is based on _trigonometric functions_ sine and cosine using _different frequencies_.
+$ "PE"(p o s, 2i) = sin((p o s) / 10000^((2i)/d_"model")) $
+$ "PE"(p o s, 2i+1) = cos((p o s) / 10000^((2i)/d_"model")) $
+- $p o s$: Position of the token in the sequence.
+- $i$: Dimension index within the embedding vector. $2i$ maps to even indices, $2i+1$ maps to odd indices.
+- $d_"model"$: Total dimension of the embedding vector.
 
 == The two components of Transformers
 *Encoders:*
@@ -1326,14 +1348,14 @@ with the embeddings from the encoder, and a _feed forward network_.
   [
     === Decoder-only
     Generates output one token at a time.\
-    - *Causal attention:* only sees past tokens.
+    - *Causal (Masked) attention:* only sees past tokens (future is masked).
     - _Usage:_ chat, code, next-token prediction.
     - _Examples:_ GPT-1/2/3/4/5, Llama, Mistral, Qwen, Claude, Gemini.
   ],
   [
     === Encoder-decoder
     The original "Attention is all you need" design.\
-    - Encoder reads input, decoder generates output.
+    - Encoder reads input, decoder uses *Masked Self-Attention* to generate output.
     - _Usage:_ translation, summarization.
     - _Examples:_ T5, BART (2019-), FLAN-T5, Marian (translation).
   ],
@@ -1351,7 +1373,13 @@ _Strong match_: #hinweis[(cosine similarity close to 1)] "most" of the value $V$
 #hinweis[($V *$ cosine similarity)]. _No strong match:_ a close to 0 vector is returned.
 _The result of this softmax-lookup is the sum of all values, weighted according to the key/value similarity._
 
-#align(center, image("img/aiap_18.png", width: 80%))
+#align(center)[
+  #grid(
+    columns: 2,
+    gutter: 0em,
+    image("img/aiap_18.png", width: 130%), image("img/aiap_21.png", width: 60%),
+  )
+]
 
 More compact representation: $"Attention"(Q,K,V) = "softmax"((Q K^T) / sqrt(d_k)) V$
 #hinweis[(The $sqrt(d_k)$ stabilizes the calculation)]
@@ -1424,16 +1452,17 @@ across different iterations and to create _reproducible models_. Can be done via
 - *k-fold Cross-Validation:* Daten in $k$ Teile splitten. $k$-mal trainieren (jedes Teil 1x Validierung). Misst robusten Generalisierungsfehler.
 
 = Learning Curves
-- *Overfitting:* Train-Loss sinkt, Val-Loss steigt. Modell lernt auswendig.
+- *Good Fit:* Train- & Val-Loss sinken parallel und flachen nahe beieinander ab. Train- & Val-Acc steigen parallel und flachen auf hohem Niveau ab.
+- *Overfitting:* Train-Loss sinkt weiter, Val-Loss sinkt zuerst, steigt dann aber wieder an (Schere öffnet sich). Train-Acc nähert sich 1.0, Val-Acc stagniert oder sinkt.
   - _Lösung:_ Dropout, L2-Regularisierung, mehr Daten, kleineres Modell.
-- *Underfitting:* Train- & Val-Loss bleiben beide hoch. Modell zu einfach.
+- *Underfitting:* Train- & Val-Loss stagnieren beide auf hohem Niveau. Train- & Val-Acc stagnieren beide auf tiefem Niveau.
   - _Lösung:_ Größeres Modell, länger trainieren, weniger Regularisierung.
 
-= Optimierung & Gradient Descent
-- *Batch GD:* Nutzt alle Daten pro Schritt. Langsam, stabil.
-- *SGD:* Nutzt 1 Datenpunkt (oder Mini-Batch). Schneller, entkommt lokalen Minima.
-- *Update Rule:* $ w_(t+1) = w_t - alpha dot (partial L) / (partial w) $  ($alpha$ = Learning Rate).
-- *Backpropagation:* Nutzt Kettenregel & Memoization (Teilergebnisse speichern). Verhindert doppelte Berechnungen im Berechnungsbaum.
+// = Optimierung & Gradient Descent
+// - *Batch GD:* Nutzt alle Daten pro Schritt. Langsam, stabil.
+// - *SGD:* Nutzt 1 Datenpunkt (oder Mini-Batch). Schneller, entkommt lokalen Minima.
+// - *Update Rule:* $ w_(t+1) = w_t - alpha dot (partial L) / (partial w) $  ($alpha$ = Learning Rate).
+// - *Backpropagation:* Nutzt Kettenregel & Memoization (Teilergebnisse speichern). Verhindert doppelte Berechnungen im Berechnungsbaum.
 
 = Business Model Canvas (BMC)
 1. *Value Proposition:* Nutzen der KI (z.B. Automatisierung).
