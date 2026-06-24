@@ -56,24 +56,6 @@ Let the LLM _access a data source_ by uploading files or writing prompts that hi
 send a query to a search engine. Also called _context-aware LLM_. Use cases: Searching internal,
 new #hinweis[(post-training)] or domain-specific data. A popular RAG architecture is LlamaIndex.
 
-== Open Source LLMs
-Many open source models are available. Two popular models are _LLaMA2_ by Meta and _Mistral_.
-Models are basically defined by two files:
-_model.py_ #hinweis[(small code file that defines the structure of the LLM and runs it)] and
-_weights.pkl_ #hinweis[(potentially huge file with the parameters. Sometimes called a "checkpoint")].
-
-== Working with your own LLM
-Enhances _security_, protects private/internal data.
-Depending on use-case: _Lower costs_, develop a _domain-expert model_ on your own data.
-You can do this by _fine-tuning_ a pre-trained model #hinweis[(expensive training, new data
-  requires new fine-tuning)] or with _RAG_.
-
-== Multimodal AI
-_Modality:_ The way something is expressed or perceived #hinweis[(human senses, images, videos, sound)].
-_Multimodal:_ involving several ways of operating or dealing with something.
-A multimodal AI integrates different modes of data. Internally, different modes are mapped onto
-similar representations #hinweis[(image, text, voice representing a tree)].
-
 = Technology Ethics
 *Problems of AI:*
 Energy consumption, Few players controlling huge market, Conflict of Interest, Deskilling of moral decisions\
@@ -204,14 +186,6 @@ The trained model can then predict the most likely label when given an image.
 It requires 4 things: _Data_, a _loss function_ #hinweis[(typically a probabilistic loss like
   `SparseCategoricalCrossentropy`)], a _model_ and an _optimizer_ #hinweis[(`Adam`, an improved
   version of Stochastic Gradient Descent)]
-
-== Example Architecture
-- _Input:_ The pixel values of a 2D image are "flattened" into a column vector
-  #hinweis[($1 times n$ vector)] and fed to the hidden layers of an ANN.
-- _Output:_ The ANN has one output neuron per class. Each neuron "votes" for its class.
-  The more active a neuron is, the more likely the input belongs to this class.
-
-#align(center, image("img/aiap_3.png", width: 70%))
 
 == Terminology
 - _The Convolution Operation:_ Involves applying a filter (kernel) to input data to create a feature map,
@@ -680,9 +654,6 @@ autoencoder = Denoise()
 */
 
 = Representations
-== Expression Trees
-#image("img/aiap_10.png", width: 80%)
-There is not always just one solution, there might be different trees for the same expression.
 
 == Backpropagation
 Backpropagation is a supervised learning technique to _adjust the weights of the neurons to
@@ -740,18 +711,6 @@ rates and schedulers. _Annealing_ is one example of Learning Rate Scheduling.\
 With a scheduler, we can have _faster training_ #hinweis[(higher learning rate in the beginning)]
 and _better convergence into a (local) minimum_.
 ```py keras.optimizers.schedules.CosineDecay( ... )```
-
-== Accuracy vs. Loss
-*Accuracy:*
-_Counting the correct samples._ All samples contribute the same amount to this value,
-they are either correct or incorrect. This _cannot be optimized_ with a function.\
-*Loss:*
-The loss is a _differentiable_ function which _can be optimized_.
-Very confidently wrong predictions make the loss explode.
-
-== U-Net Architecture
-Is a "classic" architecture for image segmentation that splits the image into fore- and background.
-#align(center, image("img/aiap_12.png", width: 78%))
 
 === Complex Network Topologies
 *Skip Connections:* Keep a pointer to the output of a layer.
@@ -1360,18 +1319,6 @@ with the embeddings from the encoder, and a _feed forward network_.
     - _Examples:_ T5, BART (2019-), FLAN-T5, Marian (translation).
   ],
 )
-
-== Calculation of Attention
-The _attention head_ consists of the matrices _query $Q$_, _key $K$_ and _value $V$_.
-The goal of _attention_ is to look-up the _value $V$_ of those "neighbors" which are strongly
-influencing the current token #hinweis[(words with similar meanings)].
-An _attention-score_ is calculated between each pair of the embedding vectors.
-The attention mechanism is a "softmax-version" of a dictionary:
-The _attention score_ is a _similarity measure_ between a _key $K$_ and a _query $Q$_.
-Both are vectors, the dot-product is used to calculate how strongly they match.
-_Strong match_: #hinweis[(cosine similarity close to 1)] "most" of the value $V$ is returned
-#hinweis[($V *$ cosine similarity)]. _No strong match:_ a close to 0 vector is returned.
-_The result of this softmax-lookup is the sum of all values, weighted according to the key/value similarity._
 
 #align(center)[
   #grid(
