@@ -7,9 +7,11 @@
   fach-long: "AI Applications",
   semester: "FS24",
   language: "en",
-  font-size: 10pt,
+  font-size: 9.6pt,
   tableofcontents: (enabled: true, depth: 3, columns: 2),
 )
+
+#set page(margin: (top: 0.9cm, left: 0.8cm, right: 0.8cm, bottom: 0.8cm))
 
 = Artificial Neural Network (ANN)
 An ANN is a machine learning model inspired by the structure and function of animal brains.
@@ -57,6 +59,9 @@ send a query to a search engine. Also called _context-aware LLM_. Use cases: Sea
 new #hinweis[(post-training)] or domain-specific data. A popular RAG architecture is LlamaIndex.
 
 = Technology Ethics
+_Application of ethical thinking to the practical concerns of technology._
+Take actions that are voluntarily constrained by our judgement -- our ethics.
+
 *Problems of AI:*
 Energy consumption, Few players controlling huge market, Conflict of Interest, Deskilling of moral decisions\
 *DIKW Pyramid:*
@@ -65,10 +70,6 @@ _Information_ #hinweis[(Data with analyzed relationships and connections)],\
 _Knowledge_ #hinweis[(Contextualized Information)],
 _Wisdom_ #hinweis[(This is the top of the pyramid)].
 These four layers lead to real-world decision making.
-
-== Technology Ethics
-_Application of ethical thinking to the practical concerns of technology._
-Take actions that are voluntarily constrained by our judgement -- our ethics.
 
 === 16 Challenges and Opportunities
 #grid(
@@ -481,8 +482,7 @@ So the resulting shape is $underline(8 times 8 times 64)$
 
 ==== Layer 4, MaxPooling
 No trainable parameters.\
-_Output shape:_ $(fxcolor("grün", 8) - fxcolor("orange", 2)) \/ fxcolor("rot", 2) + 1
-= underline(4)$,
+_Output shape:_ $(fxcolor("grün", 8) - fxcolor("orange", 2)) \/ fxcolor("rot", 2) + 1 = underline(4)$,
 Shape is $underline(4 times 4 times 64)$\
 
 ==== Layer 5, Flatten
