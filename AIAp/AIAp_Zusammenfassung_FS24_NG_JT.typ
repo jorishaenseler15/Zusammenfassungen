@@ -7,11 +7,11 @@
   fach-long: "AI Applications",
   semester: "FS24",
   language: "en",
-  font-size: 9.6pt,
+  font-size: 9.9pt,
   tableofcontents: (enabled: true, depth: 3, columns: 2),
 )
 
-#set page(margin: (top: 0.9cm, left: 0.8cm, right: 0.8cm, bottom: 0.8cm))
+#set page(margin: (top: 0.2cm, left: 0.2cm, right: 0.2cm, bottom: 0.6cm))
 
 = Artificial Neural Network (ANN)
 An ANN is a machine learning model inspired by the structure and function of animal brains.
