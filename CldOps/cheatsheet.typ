@@ -2,11 +2,6 @@
   paper: "a4",
   flipped: true,
   margin: (x: 0.1cm, top: 0.1cm, bottom: 0.1cm),
-  background: [
-    #place(top + left, dx: 7.575cm, dy: 0.8cm)[#line(angle: 90deg, length: 19.4cm, stroke: 0.4pt + rgb("#e2e8f0"))]
-    #place(top + left, dx: 14.85cm, dy: 0.8cm)[#line(angle: 90deg, length: 19.4cm, stroke: 0.4pt + rgb("#e2e8f0"))]
-    #place(top + left, dx: 22.125cm, dy: 0.8cm)[#line(angle: 90deg, length: 19.4cm, stroke: 0.4pt + rgb("#e2e8f0"))]
-  ],
 )
 
 #set text(size: 5.5pt, font: ("Helvetica", "Arial"), lang: "de")
