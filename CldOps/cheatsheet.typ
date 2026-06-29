@@ -95,6 +95,7 @@
 #image("img/cdcd.png", width: 70%)
 
 == Deployment-Strategien
+#set list(spacing: 1.8pt)
 - *Recreate / Big-Bang*: Alle alten Instanzen stoppen, dann neue starten (Downtime).
 - *Rolling*: Schrittweiser Austausch alter Instanzen (no downtime).
 - *Blue-Green*: 2 identische Umgebungen (aktiv/inaktiv), schneller Switch.
@@ -229,7 +230,61 @@ module "vpc" { source = "./modules/vpc" }
 - *Jinja2-Templating*: Dynamische Dateien & Variablen-Einsatz (z.B. `{{ port }}`).
 - *Collections*: Größere Pakete, die mehrere Roles, Modules und Plugins bündeln (Download via `ansible-galaxy`).
 
-#image("img/jinja2.png", width: 60%)
+#block[
+  #set text(size: 4.5pt)
+  #grid(
+    columns: (1fr, 1.2fr),
+    gutter: 5pt,
+    [
+      *vars.yml (Daten):*
+      ```yaml
+      hostname: Router1
+      interfaces:
+      - name: 1
+        ip: 10.3.255.106
+        mask: 255.255.255.0
+        loopback: false
+      - name: 0
+        ip: 6.6.6.6
+        mask: 255.255.255.255
+        loopback: true
+      - name: 1
+        ip: 192.168.6.1
+        mask: 255.255.255.0
+        loopback: true
+      ```
+    ],
+    [
+      *Jinja2-Template (.j2):*
+      ```xml
+      <hostname>{{ hostname }}</hostname>
+      <interface>
+      {% for interface in interfaces %}
+        {% if interface.loopback %}
+        <Loopback>
+        {% else %}
+        <GigabitEthernet>
+        {% endif %}
+          <name>{{ interface.name }}</name>
+          <ip>
+            <address>
+              <primary>
+                <address>{{ interface.ip }}</address>
+                <mask>{{ interface.mask }}</mask>
+              </primary>
+            </address>
+          </ip>
+        {% if interface.loopback %}
+        </Loopback>
+        {% else %}
+        </GigabitEthernet>
+        {% endif %}
+      {% endfor %}
+      </interface>
+      ```
+    ],
+  )
+]
 
 == 5. Ansible CLI Commands
 - *Ping*: `ansible all -i inventory.ini -m ping`
@@ -312,7 +367,7 @@ Führen die eigentlichen Applikations-Workloads aus.
 - *Container Runtime*: Führt die Container tatsächlich aus (z.B. containerd).
 - *Pod*: Kleinste K8s-Einheit. Kapselt 1-N Container (teilen sich IP & Storage).
 
-#image("img/k8sarch.png", width: 100%)
+#image("img/k8sarch.svg", width: 100%)
 
 == 3. QoS Classes (Quality of Service)
 - *Guaranteed* (Prio 1): Request = Limit für CPU & Mem exakt gleich für alle Container.
@@ -385,15 +440,141 @@ Das Prinzip: Nutzt reine, valide YAML-Dateien. Man definiert eine "Basis-Konfigu
 - *Transformers*: Passen Ressourcen automatisiert an (z.B. *allen* Ressourcen ein bestimmtes Label anfügen).
 - *Components*: Wiederverwendbare, einkapselbare Konfigurationsblöcke (flexibler als Standard-Bases).
 
-#grid(
-  columns: 3,
-  gutter: 5pt,
-  image("img/kustomizeoverlay.png", width: 100%),
-  image("img/kustomizeexample.png", width: 100%),
-  image("img/kustomizepatchexample.png", width: 100%),
-)
+#block[
+  #set text(size: 4.6pt)
+  #grid(
+    columns: 3,
+    gutter: 4pt,
+    [
+      *Struktur:*
+      ```
+      ~/someApp
+      ├── base
+      │   ├── deployment.yaml
+      │   ├── kustomization.yaml
+      │   └── service.yaml
+      └── overlays
+          ├── development
+          │   ├── cpu_count.yaml
+          │   ├── kustomization.yaml
+          │   └── replica_count.yaml
+          └── production
+              ├── cpu_count.yaml
+              ├── kustomization.yaml
+              └── replica_count.yaml
+      ```
+    ],
+    [
+      *kustomization.yaml:*
+      ```yaml
+      apiVersion: kustomize.config.k8s.io/v1beta1
+      kind: Kustomization
+      bases:
+      - ../../base
+      namespace: roar-staging
+      # Change the image name & version
+      images:
+      - name: quay.io/techupskills/roar-db:v2
+        newName: quay.io/bclaster/roar-db-test
+        newTag: v4
+      ```
+    ],
+    [
+      *Patches:*
+      ```yaml
+      patches:
+      - patch: |-
+          - op: replace
+            path: /metadata/name
+            value: nginx-server
+        target:
+          kind: Service
+          name: nginx-app
+      ```
+    ],
+  )
+]
 
-#image("img/kustomizecomponents.png", width: 80%)
+#block[
+  #set text(size: 4.6pt)
+  #grid(
+    columns: (1fr, 1.2fr),
+    gutter: 5pt,
+    [
+      *Components:*
+      #grid(
+        columns: 2,
+        gutter: 4pt,
+        [
+          `ext-storage`:
+          ```yaml
+          apiVersion: kustomize.config.k8s.io/v1alpha1
+          kind: Component
+          resources:
+          - storage.yaml
+          # add in persistent storage
+          patchesStrategicMerge:
+          - patch_pv.yaml
+          ```
+        ],
+        [
+          `my-settings`:
+          ```yaml
+          apiVersion: kustomize.config.k8s.io/v1alpha1
+          kind: Component
+          resources:
+          - my-secret.yaml
+          configMapGenerator:
+          - name: my-configmap
+            literals:
+            - key = val
+          ```
+        ],
+      )
+    ],
+    [
+      *Overlays mit Components:*
+      #grid(
+        columns: 3,
+        gutter: 3pt,
+        [
+          `dev`:
+          ```yaml
+          resources:
+          - ../../base
+          - storage.yaml
+          namespace: dev
+          components:
+          - ../../components/ext-storage
+          - ../../components/my-settings
+          ```
+        ],
+        [
+          `test`:
+          ```yaml
+          resources:
+          - ../../base
+          - my-secret.yaml
+          namespace: test
+          components:
+          - ../../components/my-settings
+          ```
+        ],
+        [
+          `prod`:
+          ```yaml
+          resources:
+          - ../../base
+          namespace: prod
+          # add in persistent storage
+          components:
+          - ../../components/ext-storage
+          ```
+        ],
+      )
+    ],
+  )
+]
 
 = 9. Cilium
 #image("img/linuxkernelebpfcilium.png", width: 100%)
@@ -577,27 +758,16 @@ Hebt das "Automatic Allow" auf durch leere Regeln für Ingress & Egress (blockie
   - *Kiali*: Graphisches Dashboard zur Visualisierung von Struktur, Traffic und Health im Mesh.
 
 == Istio Sidecar Downsides
-#grid(
-  columns: (1.2fr, 1fr),
-  gutter: 10pt,
-  [
-    - *Invasiveness*: Modifizierte Pod-Spec & umgeleiteter Traffic. Service-Mesh-Upgrades erfordern einen Pod-Neustart.
-    - *Underutilization*: Hohe Overhead-Ressourcen (CPU/Mem) für jeden Workload-Proxy. Ressourcen müssen für Worst-Case-Szenarien provisioniert werden.
-  ],
-  image("img/sidecaristio.png", width: 100%),
-)
+- *Invasiveness*: Modifizierte Pod-Spec & umgeleiteter Traffic. Service-Mesh-Upgrades erfordern einen Pod-Neustart.
+- *Underutilization*: Hohe Overhead-Ressourcen (CPU/Mem) für jeden Workload-Proxy. Ressourcen müssen für Worst-Case-Szenarien provisioniert werden.
+#image("img/sidecaristio.png", width: 100%)
 
 == Istio Ambient Mode
-#grid(
-  columns: (1.2fr, 1fr),
-  gutter: 10pt,
-  [
-    Splittet Service-Mesh-Funktionen in zwei Schichten auf (ohne Sidecars):
-    - *ztunnel (Zero-Trust Tunnel)*: Läuft als DaemonSet pro Node. Handhabt L4-Transport (mTLS, Verschlüsselung, Routing, Identität, Telemtry, Metriken) für alle Pods auf dem Node.
-    - *Waypoint Proxy*: Optionaler L7-Proxy (Envoy) pro Namespace / Service-Account. Wird nur bei Bedarf für L7-Policies (HTTP-Routing, Auth, Rate Limiting) zwischengeschaltet.
-  ],
-  image("img/istioambientwithwaypointl7.png", width: 100%),
-)
+Splittet Service-Mesh-Funktionen in zwei Schichten auf (ohne Sidecars):
+- *ztunnel (Zero-Trust Tunnel)*: Läuft als DaemonSet pro Node. Handhabt L4-Transport (mTLS, Verschlüsselung, Routing, Identität, Telemtry, Metriken) für alle Pods auf dem Node.
+- *Waypoint Proxy*: Optionaler L7-Proxy (Envoy) pro Namespace / Service-Account. Wird nur bei Bedarf für L7-Policies (HTTP-Routing, Auth, Rate Limiting) zwischengeschaltet.
+#image("img/istioambientwithwaypointl7.png", width: 100%)
+
 
 == K8s Gateway API Routing (HTTPRoute)
 #block[
@@ -687,7 +857,7 @@ Ein Waypoint-Proxy wird *pro Namespace* (oder Service-Account) deployt. *Wichtig
     - Stack traces & Exception details
     - System messages & Debug logs
     - Business events & Audits
-  ]
+  ],
 )
 
 == Push vs. Pull Monitoring
@@ -705,7 +875,7 @@ Ein Waypoint-Proxy wird *pro Namespace* (oder Service-Account) deployt. *Wichtig
     - Collector fragt System ab (HTTP, SNMP, ICMP).
     - *Vorteil*: Collector steuert Abfragefrequenz.
     - *Nachteil*: Überwachtes System muss erreichbar sein.
-  ]
+  ],
 )
 
 == Scaling Prometheus
@@ -748,7 +918,7 @@ Ein Waypoint-Proxy wird *pro Namespace* (oder Service-Account) deployt. *Wichtig
     - `!=` : Zeile enthält String *nicht*.
     - `|~` : Zeile matcht Regex.
     - `!~` : Zeile matcht Regex *nicht*.
-  ]
+  ],
 )
 
 = 12. GitOps & CD
@@ -771,28 +941,20 @@ Ein Waypoint-Proxy wird *pro Namespace* (oder Service-Account) deployt. *Wichtig
     - #plus-green Einfache Skalierung identischer Cluster.
     - #minus-red Benötigt In-Cluster Agent (z.B. Argo CD).
     - #minus-red Moderate Deploy-Geschwindigkeit (Polling-Interval / Sync).
-  ]
+  ],
 )
 
 == Argo CD vs. Flux CD
-#grid(
-  columns: (1fr, 1fr),
-  gutter: 10pt,
-  [
-    *Argo CD:*
-    - *Features*: Web UI, Multi-Cluster Management, SSO-Integration, App-of-Apps Pattern.
-    - *Ressourcen*: `Application`, `ApplicationSet`, `AppProject`.
-    #v(2pt)
-    #image("img/argocdarch.png", width: 100%)
-  ],
-  [
-    *Flux CD:*
-    - *Features*: GitOps Toolkit (modulare Controller), native K8s-Integration, CLI-driven.
-    - *Ressourcen*: `GitRepository`, `OCIRepository`, `Bucket`, `HelmRepository`, `Kustomization`, `HelmRelease`.
-    #v(2pt)
-    #image("img/fluxarch.png", width: 100%)
-  ]
-)
+*Argo CD:*
+- *Features*: Web UI, Multi-Cluster Management, SSO-Integration, App-of-Apps Pattern.
+- *Ressourcen*: `Application`, `ApplicationSet`, `AppProject`.
+#image("img/argocdarch.png", width: 80%)
+
+*Flux CD:*
+- *Features*: GitOps Toolkit (modulare Controller), native K8s-Integration, CLI-driven.
+- *Ressourcen*: `GitRepository`, `OCIRepository`, `Bucket`, `HelmRepository`, `Kustomization`, `HelmRelease`.
+#image("img/fluxarch.png", width: 80%)
+
 
 == Secrets Management in GitOps
 - *Sealed Secrets*: Asymmetrisch. Verschlüsselung erfolgt lokal via `kubeseal` (Public Key), Entschlüsselung im Cluster durch Controller (Private Key) in native K8s Secrets.
